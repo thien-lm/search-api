@@ -15,6 +15,7 @@ app = Flask(__name__)
 @app.route('/cluster', methods=['POST'])
 def cluster():
     # Get the query text from the POST request
+    print("hi client")
     query_text = request.json['query']
     options = request.json['option']
     # Connect to Elasticsearch
