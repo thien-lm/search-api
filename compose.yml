@@ -1,0 +1,126 @@
+# version: "2"
+# services:
+#   elasticsearch:
+#     image: docker.elastic.co/elasticsearch/elasticsearch:7.17.0
+#     container_name: elasticsearch
+#     environment:
+#       - xpack.security.enabled=false
+#       - discovery.type=single-node
+#       - PLUGINS=ingest-csv
+#     networks:
+#       - es-net
+#     ports:
+#       - 9200:9200
+#     #mem_limit: 3G  # Set your desired memory limit here
+#   kibana:
+#     image: docker.elastic.co/kibana/kibana:7.17.0
+#     container_name: kibana
+#     mem_limit: 1G
+#     environment:
+#       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+#     networks:
+#       - es-net
+#     ports:
+#       - 5601:5601
+#   data:
+#     image: busybox
+#     container_name: data
+#     networks:
+#       - es-net
+#     volumes:
+#       - ./data:/data
+
+# networks:
+#   es-net:
+#      driver: bridge
+
+
+
+
+
+
+# version: "3"
+# services:
+#   elasticsearch:
+#     image: docker.elastic.co/elasticsearch/elasticsearch:7.17.0
+#     container_name: elasticsearch
+#     environment:
+#       - node.name=elasticsearch
+#       - cluster.name=es-docker-cluster
+#       - discovery.type=single-node
+#       - bootstrap.memory_lock=true
+#       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+#     ulimits:
+#       memlock:
+#         soft: -1
+#         hard: -1
+#     volumes:
+#       - esdata:/usr/share/elasticsearch/data
+#     ports:
+#       - 9200:9200
+
+#   kibana:
+#     image: docker.elastic.co/kibana/kibana:7.17.0
+#     container_name: kibana
+#     ports:
+#       - 5601:5601
+#     environment:
+#       ELASTICSEARCH_URL: http://elasticsearch:9200
+#     depends_on:
+#       - elasticsearch
+
+# volumes:
+#   esdata:
+#     driver: local
+
+
+
+
+
+
+
+
+
+
+
+version: "3"
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.0
+    container_name: elasticsearch
+    environment:
+      - node.name=elasticsearch
+      - cluster.name=es-docker-cluster
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.17.0
+    container_name: kibana
+    ports:
+      - 5601:5601
+    environment:
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+    depends_on:
+      - elasticsearch
+
+  flaskapp:
+    image: my-flask-app
+    container_name: flaskapp
+    ports:
+      - 5000:5000
+    depends_on:
+      - elasticsearch
+
+volumes:
+  esdata:
+    driver: local
